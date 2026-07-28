@@ -44,6 +44,10 @@
         <strong>TCCON</strong>, <strong>NOAA GML</strong>, <strong>AGAGE</strong> &amp; <strong>ICOS</strong> (greenhouse gases),
         <strong>SKYNET</strong> &amp; <strong>AERONET</strong> (aerosols/radiation), and <strong>NDACC</strong> &amp;
         <strong>COCCON</strong> (FTIR/remote-sensing column networks) to see how differently each real ground network is distributed.</li>
+      <li><strong>GHG satellites</strong> sit in between: <strong>TROPOMI</strong>, <strong>OCO-2</strong> &amp;
+        <strong>GOSAT</strong> are near-global but with real gaps (narrow swaths, sparse footprints, multi-day repeat cycles);
+        <strong>OCO-3</strong> &amp; <strong>EMIT</strong> are hard-capped at &plusmn;52&deg; latitude by the ISS orbit they ride on;
+        and <strong>MethaneSAT</strong> only ever targeted specific oil &amp; gas basins rather than imaging systematically.</li>
     </ul>
   </section>
 
@@ -483,6 +487,15 @@
           <label class="legend-item"><input type="checkbox" data-domain="LDAPS"><i class="swatch swatch-ldaps"></i> LDAPS (Korea)</label>
           <label class="legend-item"><input type="checkbox" data-domain="ACCESS-R"><i class="swatch swatch-accessr"></i> ACCESS-R (Australia)</label>
         </div>
+        <div class="legend-group">
+          <span class="legend-group-title">GHG satellites</span>
+          <label class="legend-item"><input type="checkbox" data-domain="TROPOMI"><i class="swatch swatch-tropomi"></i> TROPOMI (CH&#8324;)</label>
+          <label class="legend-item"><input type="checkbox" data-domain="OCO-2"><i class="swatch swatch-oco2"></i> OCO-2 (CO&#8322;)</label>
+          <label class="legend-item"><input type="checkbox" data-domain="GOSAT"><i class="swatch swatch-gosat"></i> GOSAT (CO&#8322;/CH&#8324;)</label>
+          <label class="legend-item"><input type="checkbox" data-domain="OCO-3"><i class="swatch swatch-oco3"></i> OCO-3 (ISS, &plusmn;52&deg;)</label>
+          <label class="legend-item"><input type="checkbox" data-domain="EMIT"><i class="swatch swatch-emit"></i> EMIT (ISS, point-source)</label>
+          <label class="legend-item"><input type="checkbox" data-domain="MethaneSAT"><i class="swatch swatch-methanesat"></i> MethaneSAT (targets)</label>
+        </div>
         <p class="legend-hint">Click empty map &rarr; live model data at that point &middot; click a dot &rarr; station info &middot; scroll/pinch or use +/&minus; to zoom, drag to pan</p>
       </div>
     </div>
@@ -502,6 +515,9 @@
       (non-commercial free API). Model domain boxes marked &ldquo;approximate&rdquo; in the panel are estimated from each agency&rsquo;s
       narrative coverage description, since exact corner coordinates aren&rsquo;t always published; others (HRRR, AROME, CMA-MESO, UKV)
       use official grid metadata. Click any covered point on the map for a real, working link to download each product.
+      MethaneSAT&rsquo;s five target-basin boxes are approximate and cover only the named regions it publicly reported (of ~45 it
+      surveyed) before the instrument stopped communicating in June 2025. GHGSat is deliberately not shown here: it observes
+      individual tasked facilities on demand rather than a fixed geographic area, so it has no real coverage box to draw.
     </p>
   </section>
 </main>

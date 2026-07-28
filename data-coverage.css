@@ -102,6 +102,12 @@
 .domain-box.CMA-MESO { fill: #a0674f; fill-opacity: 0.18; stroke: #a0674f; stroke-opacity: 0.5; }
 .domain-box.LDAPS { fill: #5f6fae; fill-opacity: 0.18; stroke: #5f6fae; stroke-opacity: 0.5; }
 .domain-box.ACCESS-R { fill: #8fae4f; fill-opacity: 0.18; stroke: #8fae4f; stroke-opacity: 0.5; }
+.domain-box.TROPOMI { fill: #d67be0; fill-opacity: 0.1; stroke: none; }
+.domain-box.OCO-2 { fill: #7be0c9; fill-opacity: 0.1; stroke: none; }
+.domain-box.GOSAT { fill: #e0a87b; fill-opacity: 0.1; stroke: none; }
+.domain-box.OCO-3 { fill: #7b9ee0; fill-opacity: 0.16; stroke: #7b9ee0; stroke-opacity: 0.4; }
+.domain-box.EMIT { fill: #e07b9e; fill-opacity: 0.16; stroke: #e07b9e; stroke-opacity: 0.4; }
+.domain-box.MethaneSAT { fill: #8bc34a; fill-opacity: 0.25; stroke: #8bc34a; stroke-opacity: 0.6; }
 
 .query-marker {
   fill: none;
@@ -179,6 +185,12 @@
 .swatch-cmameso { background: #a0674f; }
 .swatch-ldaps { background: #5f6fae; }
 .swatch-accessr { background: #8fae4f; }
+.swatch-tropomi { background: #d67be0; }
+.swatch-oco2 { background: #7be0c9; }
+.swatch-gosat { background: #e0a87b; }
+.swatch-oco3 { background: #7b9ee0; }
+.swatch-emit { background: #e07b9e; }
+.swatch-methanesat { background: #8bc34a; }
 
 .map-panel {
   background: var(--bg-alt);

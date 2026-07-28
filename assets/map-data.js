@@ -1146,3 +1146,124 @@ const COCCON_STATIONS = [
   { name: "Harvard Forest", country: "USA", lat: 42.538, lon: -72.171, status: "planned" },
   { name: "Hyderabad", country: "India", lat: 17.385, lon: 78.4867, status: "planned" },
 ];
+
+/*
+ * Greenhouse-gas satellite coverage. Unlike the NWP models above, satellite
+ * "coverage" is really an orbital-geometry question, approximated here as:
+ *   - global:true for sun-synchronous wide-swath / repeat-cycle missions
+ *     that eventually sample the whole sunlit Earth (TROPOMI, OCO-2, GOSAT),
+ *     each noted with its real swath/footprint/repeat-cycle caveat.
+ *   - a fixed ±52° latitude band for ISS-mounted instruments (OCO-3, EMIT),
+ *     since the ISS orbital inclination physically limits their reach —
+ *     this is the ISS orbit's real coverage limit, not an approximation.
+ *   - named target-region boxes for MethaneSAT, which observed specific
+ *     oil & gas basins in tasked mode rather than a systematic swath;
+ *     these 5 (of ~45 real regions it surveyed) are approximate boxes
+ *     around basins explicitly named in its published results. MethaneSAT
+ *     stopped communicating in June 2025; its public data remains online.
+ * GHGSat (tasked, facility-level, no fixed geographic domain) is
+ * intentionally omitted — there's no real "coverage area" to draw.
+ */
+const SATELLITE_DOMAINS = [
+  {
+    name: "TROPOMI (Sentinel-5P)",
+    group: "TROPOMI",
+    agency: "ESA/Copernicus",
+    resolution: "~7×5.5 km, 2600 km swath",
+    scope: "satellite",
+    global: true,
+    link: "https://dataspace.copernicus.eu/explore-data/data-collections/sentinel-data/sentinel-5p",
+    note: "Near-global daily methane (CH₄) coverage — the workhorse satellite for methane monitoring, though high-latitude/cloud/tropical coverage is reduced.",
+  },
+  {
+    name: "OCO-2",
+    agency: "NASA",
+    resolution: "10.3 km swath, 2.25 km footprint",
+    scope: "satellite",
+    global: true,
+    link: "https://disc.gsfc.nasa.gov/datasets?keywords=%22OCO-2%22",
+    note: "Near-global CO₂ (XCO2) coverage over a 16-day repeat cycle — a narrow swath, so any single day only samples a thin strip, not the whole globe.",
+  },
+  {
+    name: "GOSAT / GOSAT-2",
+    group: "GOSAT",
+    agency: "JAXA / NIES / MOE",
+    resolution: "~10 km footprint, sparse sampling",
+    scope: "satellite",
+    global: true,
+    link: "https://data2.gosat.nies.go.jp/index_en.html",
+    note: "Global CO₂ &amp; CH₄ sampling via sparse individual footprints (not a continuous image) on a 3-day repeat cycle.",
+  },
+  {
+    name: "OCO-3",
+    agency: "NASA (mounted on the ISS)",
+    resolution: "2×2.2 km footprint",
+    scope: "satellite",
+    latMin: -52, latMax: 52, lonMin: -180, lonMax: 180,
+    note: "CO₂ column measurements — limited to ±52° latitude, the real physical limit of the ISS orbital inclination (not an approximation). Also has a snapshot-area target mode.",
+  },
+  {
+    name: "EMIT",
+    agency: "NASA (mounted on the ISS)",
+    resolution: "60 m",
+    scope: "satellite",
+    latMin: -52, latMax: 52, lonMin: -180, lonMax: 180,
+    link: "https://www.earthdata.nasa.gov/data/catalog/lpcloud-emitl2bch4enh-002",
+    note: "Point-source CH₄ &amp; CO₂ plume imaging, repurposed from a mineral-dust mission — same ±52° ISS latitude limit as OCO-3, ~36.5-day median revisit.",
+  },
+  {
+    name: "Permian Basin",
+    group: "MethaneSAT",
+    agency: "MethaneSAT (EDF)",
+    resolution: "~400×100 m, 200–440 km swath",
+    scope: "satellite",
+    latMin: 29.5, latMax: 34.5, lonMin: -104.5, lonMax: -100.5,
+    approx: true,
+    link: "https://www.methanesat.org/resources",
+    note: "One of ~45 real oil &amp; gas basins MethaneSAT surveyed in tasked (not systematic) mode before the instrument stopped communicating in June 2025; data stays public.",
+  },
+  {
+    name: "San Joaquin Basin",
+    group: "MethaneSAT",
+    agency: "MethaneSAT (EDF)",
+    resolution: "~400×100 m, 200–440 km swath",
+    scope: "satellite",
+    latMin: 34.5, latMax: 37.0, lonMin: -121.0, lonMax: -118.5,
+    approx: true,
+    link: "https://www.methanesat.org/resources",
+    note: "One of ~45 real oil &amp; gas basins MethaneSAT surveyed in tasked (not systematic) mode before the instrument stopped communicating in June 2025; data stays public.",
+  },
+  {
+    name: "Eagle Ford",
+    group: "MethaneSAT",
+    agency: "MethaneSAT (EDF)",
+    resolution: "~400×100 m, 200–440 km swath",
+    scope: "satellite",
+    latMin: 27.5, latMax: 30.0, lonMin: -100.0, lonMax: -97.0,
+    approx: true,
+    link: "https://www.methanesat.org/resources",
+    note: "One of ~45 real oil &amp; gas basins MethaneSAT surveyed in tasked (not systematic) mode before the instrument stopped communicating in June 2025; data stays public.",
+  },
+  {
+    name: "Amu Darya Basin",
+    group: "MethaneSAT",
+    agency: "MethaneSAT (EDF)",
+    resolution: "~400×100 m, 200–440 km swath",
+    scope: "satellite",
+    latMin: 37.0, latMax: 42.0, lonMin: 58.0, lonMax: 65.0,
+    approx: true,
+    link: "https://www.methanesat.org/resources",
+    note: "One of ~45 real oil &amp; gas basins MethaneSAT surveyed (Turkmenistan/Uzbekistan) in tasked mode before the instrument stopped communicating in June 2025; data stays public.",
+  },
+  {
+    name: "Zagros Fold Belt",
+    group: "MethaneSAT",
+    agency: "MethaneSAT (EDF)",
+    resolution: "~400×100 m, 200–440 km swath",
+    scope: "satellite",
+    latMin: 29.0, latMax: 35.0, lonMin: 44.0, lonMax: 50.0,
+    approx: true,
+    link: "https://www.methanesat.org/resources",
+    note: "One of ~45 real oil &amp; gas basins MethaneSAT surveyed (Iran/Iraq) in tasked mode before the instrument stopped communicating in June 2025; data stays public.",
+  },
+];

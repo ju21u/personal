@@ -68,9 +68,13 @@
     cb.addEventListener("change", apply);
   });
 
-  // Model coverage domain boxes
-  MODEL_DOMAINS.forEach((dom) => {
-    const cls = dom.name.replace(/\s+/g, "-");
+  // Model + satellite coverage domain boxes. `group` lets several real
+  // sub-regions (e.g. MethaneSAT's named target basins) share one legend
+  // checkbox and color while still listing their own name/note when clicked.
+  const ALL_DOMAINS = MODEL_DOMAINS.concat(SATELLITE_DOMAINS);
+
+  ALL_DOMAINS.forEach((dom) => {
+    const cls = (dom.group || dom.name).replace(/\s+/g, "-");
     let el;
     if (dom.global) {
       el = document.createElementNS(NS, "rect");
@@ -91,21 +95,22 @@
     }
     el.setAttribute("class", "domain-box " + cls);
     el.style.display = "none";
-    el.dataset.domain = dom.name;
+    el.dataset.domain = dom.group || dom.name;
     domainLayer.appendChild(el);
   });
 
   legend.querySelectorAll('input[data-domain]').forEach((cb) => {
     const apply = () => {
-      const el = domainLayer.querySelector(`[data-domain="${cb.dataset.domain}"]`);
-      if (el) el.style.display = cb.checked ? "" : "none";
+      domainLayer.querySelectorAll(`[data-domain="${cb.dataset.domain}"]`).forEach((el) => {
+        el.style.display = cb.checked ? "" : "none";
+      });
     };
     apply();
     cb.addEventListener("change", apply);
   });
 
   function domainsCovering(lat, lon) {
-    return MODEL_DOMAINS.filter((dom) => {
+    return ALL_DOMAINS.filter((dom) => {
       if (dom.global) return true;
       return lat >= dom.latMin && lat <= dom.latMax && lon >= dom.lonMin && lon <= dom.lonMax;
     });
