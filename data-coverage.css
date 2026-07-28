@@ -1,0 +1,243 @@
+.map-intro p { margin: 0 0 16px; }
+
+.map-legend-text {
+  margin: 0;
+  padding-left: 20px;
+}
+.map-legend-text li { margin-bottom: 10px; }
+
+.map-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.map-wrap {
+  position: relative;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+#worldMap {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: grab;
+  background: var(--bg);
+  border-radius: 6px;
+  touch-action: none;
+}
+#worldMap.panning { cursor: grabbing; }
+
+.map-zoom-controls {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.map-zoom-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.map-zoom-controls button:hover { border-color: var(--accent); color: var(--accent); }
+
+#worldMap .land {
+  fill: var(--border);
+  stroke: var(--bg-alt);
+  stroke-width: 0.6;
+  transition: fill 0.15s ease;
+}
+#worldMap .land:hover {
+  fill: var(--text-muted);
+}
+
+.station-dot {
+  stroke: var(--bg);
+  stroke-width: 0.4;
+  cursor: pointer;
+}
+.station-dot.tccon { fill: var(--accent); }
+.station-dot.noaa { fill: #c96f2e; }
+.station-dot.skynet { fill: #a24fd6; }
+.station-dot.aeronet { fill: #d64f8a; }
+.station-dot.icos { fill: #4f8ad6; }
+.station-dot.agage { fill: #4fd67a; }
+.station-dot.ndacc { fill: #d6c94f; }
+.station-dot.coccon { fill: #2ed6c9; }
+.station-dot:hover { r: 4; }
+
+.domain-box {
+  pointer-events: none;
+  stroke-width: 1;
+}
+.domain-box.ERA5 { fill: var(--text-muted); fill-opacity: 0.12; stroke: none; }
+.domain-box.GFS { fill: #3fa7a0; fill-opacity: 0.1; stroke: none; }
+.domain-box.ECMWF-IFS { fill: #c9a13d; fill-opacity: 0.1; stroke: none; }
+.domain-box.GEOS-FP { fill: #6aa84f; fill-opacity: 0.1; stroke: none; }
+.domain-box.MERRA-2 { fill: #7d5fd6; fill-opacity: 0.1; stroke: none; }
+.domain-box.CAMS { fill: #d1495b; fill-opacity: 0.1; stroke: none; }
+.domain-box.HRRR { fill: #c96f2e; fill-opacity: 0.18; stroke: #c96f2e; stroke-opacity: 0.5; }
+.domain-box.ICON-D2 { fill: #4f8ad6; fill-opacity: 0.18; stroke: #4f8ad6; stroke-opacity: 0.5; }
+.domain-box.JMA-MSM { fill: #a24fd6; fill-opacity: 0.18; stroke: #a24fd6; stroke-opacity: 0.5; }
+.domain-box.AROME { fill: #2ea89e; fill-opacity: 0.18; stroke: #2ea89e; stroke-opacity: 0.5; }
+.domain-box.UKV { fill: #d4b83d; fill-opacity: 0.18; stroke: #d4b83d; stroke-opacity: 0.5; }
+.domain-box.ICON-CH2 { fill: #4caf7d; fill-opacity: 0.18; stroke: #4caf7d; stroke-opacity: 0.5; }
+.domain-box.HRDPS { fill: #c94f6f; fill-opacity: 0.18; stroke: #c94f6f; stroke-opacity: 0.5; }
+.domain-box.CMA-MESO { fill: #a0674f; fill-opacity: 0.18; stroke: #a0674f; stroke-opacity: 0.5; }
+.domain-box.LDAPS { fill: #5f6fae; fill-opacity: 0.18; stroke: #5f6fae; stroke-opacity: 0.5; }
+.domain-box.ACCESS-R { fill: #8fae4f; fill-opacity: 0.18; stroke: #8fae4f; stroke-opacity: 0.5; }
+
+.query-marker {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  pointer-events: none;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 28px;
+  padding: 12px 6px 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.legend-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.legend-group-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.legend-item input {
+  margin: 0;
+  cursor: pointer;
+}
+.legend-hint {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+}
+
+.dot, .swatch {
+  width: 9px;
+  height: 9px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.dot { border-radius: 50%; }
+.swatch { border-radius: 2px; }
+.dot-tccon { background: var(--accent); }
+.dot-noaa { background: #c96f2e; }
+.dot-skynet { background: #a24fd6; }
+.dot-aeronet { background: #d64f8a; }
+.dot-icos { background: #4f8ad6; }
+.dot-agage { background: #4fd67a; }
+.dot-ndacc { background: #d6c94f; }
+.dot-coccon { background: #2ed6c9; }
+.swatch-era5 { background: var(--text-muted); opacity: 0.5; }
+.swatch-gfs { background: #3fa7a0; }
+.swatch-ecmwf { background: #c9a13d; }
+.swatch-geosfp { background: #6aa84f; }
+.swatch-merra2 { background: #7d5fd6; }
+.swatch-cams { background: #d1495b; }
+.swatch-hrrr { background: #c96f2e; }
+.swatch-icond2 { background: #4f8ad6; }
+.swatch-jma { background: #a24fd6; }
+.swatch-arome { background: #2ea89e; }
+.swatch-ukv { background: #d4b83d; }
+.swatch-iconch2 { background: #4caf7d; }
+.swatch-hrdps { background: #c94f6f; }
+.swatch-cmameso { background: #a0674f; }
+.swatch-ldaps { background: #5f6fae; }
+.swatch-accessr { background: #8fae4f; }
+
+.map-panel {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-height: 220px;
+  font-size: 0.92rem;
+  position: sticky;
+  top: 80px;
+}
+.map-panel h3 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+.map-panel .panel-meta {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+.map-panel dl {
+  margin: 12px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  font-size: 0.88rem;
+}
+.map-panel dt { color: var(--text-muted); }
+.map-panel dd { margin: 0; }
+.map-panel .panel-tag {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.panel-tag-tccon { background: var(--accent-soft); color: var(--accent); }
+.panel-tag-noaa { background: #c96f2e22; color: #c96f2e; }
+.panel-tag-skynet { background: #a24fd622; color: #a24fd6; }
+.panel-tag-aeronet { background: #d64f8a22; color: #d64f8a; }
+.panel-tag-icos { background: #4f8ad622; color: #4f8ad6; }
+.panel-tag-agage { background: #4fd67a22; color: #4fd67a; }
+.panel-tag-ndacc { background: #d6c94f22; color: #d6c94f; }
+.panel-tag-coccon { background: #2ed6c922; color: #2ed6c9; }
+
+.map-credit { padding-top: 0; }
+
+@media (max-width: 760px) {
+  .map-section {
+    grid-template-columns: 1fr;
+  }
+  .map-panel {
+    position: static;
+  }
+}
