@@ -125,6 +125,27 @@
   font-size: 0.82rem;
   color: var(--text-muted);
 }
+.legend-actions {
+  flex-basis: 100%;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.legend-actions button {
+  font-family: inherit;
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.legend-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .legend-group {
   display: flex;
   flex-direction: column;

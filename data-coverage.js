@@ -109,6 +109,15 @@
     cb.addEventListener("change", apply);
   });
 
+  function setAllLayers(checked) {
+    legend.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+      cb.checked = checked;
+      cb.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+  document.getElementById("selectAllLayers").addEventListener("click", () => setAllLayers(true));
+  document.getElementById("deselectAllLayers").addEventListener("click", () => setAllLayers(false));
+
   function domainsCovering(lat, lon) {
     return ALL_DOMAINS.filter((dom) => {
       if (dom.global) return true;
