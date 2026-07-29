@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GHG Emissions Calculator - Apisada Chulakadabba</title>
+  <meta name="description" content="Interactive calculator for greenhouse gas emissions from rice and sugarcane agriculture following IPCC 2006/2019 methodology.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.1em;
+      opacity: 0.95;
+      margin-bottom: 20px;
+    }
+
+    .language-toggle {
+      display: inline-flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .lang-btn {
+      padding: 8px 16px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 0.95em;
+    }
+
+    .lang-btn.active {
+      background: white;
+      color: #667eea;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    main {
+      padding: 40px 20px;
+    }
+
+    .intro {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 6px;
+    }
+
+    .intro p {
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .intro p:last-child {
+      margin-bottom: 0;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: #667eea;
+      border-radius: 2px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 0.95em;
+    }
+
+    .label-help {
+      font-weight: normal;
+      color: #666;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+
+    input[type="number"],
+    select {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .unit-label {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .results {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 30px;
+      margin-top: 30px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .result-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      text-align: center;
+    }
+
+    .result-card.ch4 {
+      border-color: #ff9800;
+    }
+
+    .result-card.n2o {
+      border-color: #2196f3;
+    }
+
+    .result-card.co2 {
+      border-color: #4caf50;
+    }
+
+    .result-card.total {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    }
+
+    .result-value {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .result-unit {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .result-label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 0.95em;
+    }
+
+    .breakdown {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .breakdown-title {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 0.95em;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-label {
+      color: #666;
+    }
+
+    .breakdown-value {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .methodology {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+
+    .methodology strong {
+      color: #e65100;
+    }
+
+    footer {
+      background: #f5f7fa;
+      padding: 20px;
+      text-align: center;
+      color: #666;
+      font-size: 0.9em;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 20px;
+      }
+
+      header h1 {
+        font-size: 1.5em;
+      }
+
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌾 GHG Emissions Calculator</h1>
+      <p id="subtitle">Interactive tool for agricultural greenhouse gas emissions</p>
+      <div class="language-toggle">
+        <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+        <button class="lang-btn" onclick="setLanguage('th')">ไทย</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="error-message" id="errorMessage"></div>
+
+      <div class="intro" id="intro">
+        <p>This calculator estimates greenhouse gas emissions (CH₄, N₂O, CO₂) from rice and sugarcane cultivation following IPCC 2006/2019 Tier 1 methodology.</p>
+      </div>
+
+      <!-- Rice Section -->
+      <div class="section" id="riceSection">
+        <h2 class="section-title" id="riceTitle">Rice Cultivation</h2>
+
+        <div class="input-grid">
+          <div class="form-group">
+            <label for="riceArea" id="riceAreaLabel">Cultivation Area</label>
+            <input type="number" id="riceArea" placeholder="0" min="0" step="0.01">
+            <div class="unit-label">hectares (ha)</div>
+          </div>
+
+          <div class="form-group">
+            <label for="riceYield" id="riceYieldLabel">Crop Yield</label>
+            <input type="number" id="riceYield" placeholder="5" min="0" step="0.1">
+            <div class="unit-label">tons/ha</div>
+          </div>
+
+          <div class="form-group">
+            <label for="riceType" id="riceTypeLabel">Irrigation Type</label>
+            <select id="riceType">
+              <option value="flooded" id="flooded">Flooded</option>
+              <option value="rainfed" id="rainfed">Rainfed</option>
+              <option value="upland" id="upland">Upland</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="riceOrganic" id="riceOrganicLabel">Organic Matter Input (annual)</label>
+            <input type="number" id="riceOrganic" placeholder="0" min="0" step="0.1">
+            <div class="unit-label">tons/ha</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sugarcane Section -->
+      <div class="section" id="sugarcaneSection">
+        <h2 class="section-title" id="sugarcaneTitle">Sugarcane Cultivation</h2>
+
+        <div class="input-grid">
+          <div class="form-group">
+            <label for="sugarcaneArea" id="sugarcaneAreaLabel">Cultivation Area</label>
+            <input type="number" id="sugarcaneArea" placeholder="0" min="0" step="0.01">
+            <div class="unit-label">hectares (ha)</div>
+          </div>
+
+          <div class="form-group">
+            <label for="sugarcaneYield" id="sugarcaneYieldLabel">Crop Yield</label>
+            <input type="number" id="sugarcaneYield" placeholder="60" min="0" step="1">
+            <div class="unit-label">tons/ha</div>
+          </div>
+
+          <div class="form-group">
+            <label for="sugarcaneManure" id="sugarcaneManureLabel">Manure Application (annual)</label>
+            <input type="number" id="sugarcaneManure" placeholder="0" min="0" step="0.1">
+            <div class="unit-label">tons/ha</div>
+          </div>
+
+          <div class="form-group">
+            <label for="sugarcaneOrganic" id="sugarcaneOrganicLabel">Organic Matter Retention</label>
+            <select id="sugarcaneOrganic">
+              <option value="full" id="full">Full (all residue)</option>
+              <option value="partial" id="partial">Partial (50% removal)</option>
+              <option value="removed" id="removed">Removed (harvested)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fertilizer Section -->
+      <div class="section" id="fertilizerSection">
+        <h2 class="section-title" id="fertilizerTitle">Nitrogen Fertilizer Input</h2>
+
+        <div class="input-grid">
+          <div class="form-group">
+            <label for="nitrogenRate" id="nitrogenRateLabel">Total N Applied</label>
+            <input type="number" id="nitrogenRate" placeholder="0" min="0" step="1">
+            <div class="unit-label">kg N/ha/year</div>
+          </div>
+
+          <div class="form-group">
+            <label for="fertilizerType" id="fertilizerTypeLabel">Fertilizer Type</label>
+            <select id="fertilizerType">
+              <option value="urea" id="urea">Urea</option>
+              <option value="ammonium-nitrate" id="ammonium-nitrate">Ammonium Nitrate</option>
+              <option value="ammonium-sulfate" id="ammonium-sulfate">Ammonium Sulfate</option>
+              <option value="organic" id="organic">Organic (manure)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results" id="resultsSection">
+        <h2 class="section-title" id="resultsTitle">Emissions Summary</h2>
+
+        <div class="results-grid">
+          <div class="result-card ch4">
+            <div class="result-label">Methane (CH₄)</div>
+            <div class="result-value" id="ch4Result">0</div>
+            <div class="result-unit">kg CO₂-eq</div>
+          </div>
+
+          <div class="result-card n2o">
+            <div class="result-label">Nitrous Oxide (N₂O)</div>
+            <div class="result-value" id="n2oResult">0</div>
+            <div class="result-unit">kg CO₂-eq</div>
+          </div>
+
+          <div class="result-card co2">
+            <div class="result-label">Carbon Dioxide (CO₂)</div>
+            <div class="result-value" id="co2Result">0</div>
+            <div class="result-unit">kg CO₂-eq</div>
+          </div>
+
+          <div class="result-card total">
+            <div class="result-label" id="totalLabel">Total GHG Emissions</div>
+            <div class="result-value" id="totalResult">0</div>
+            <div class="result-unit">kg CO₂-eq</div>
+          </div>
+        </div>
+
+        <div class="breakdown" id="breakdown">
+          <div class="breakdown-title" id="breakdownTitle">Emissions Breakdown</div>
+          <div id="breakdownContent"></div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="calculateEmissions()" id="calcButton">Calculate</button>
+        <button class="btn-secondary" onclick="resetForm()" id="resetButton">Reset</button>
+      </div>
+
+      <div class="methodology" id="methodology">
+        <strong id="methodologyTitle">Methodology:</strong> <span id="methodologyText">This calculator uses IPCC 2006 and 2019 Refinement guidelines for agricultural emissions. Tier 1 default coefficients are applied based on crop type, management practices, and climate zone. Results are expressed as CO₂ equivalents using 100-year Global Warming Potential (GWP₁₀₀): CH₄ = 28, N₂O = 265.</span>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <p>&copy; 2026 Apisada Chulakadabba. GHG Calculator for Agricultural Emissions Assessment.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Translations
+    const translations = {
+      en: {
+        subtitle: "Interactive tool for agricultural greenhouse gas emissions",
+        intro: "This calculator estimates greenhouse gas emissions (CH₄, N₂O, CO₂) from rice and sugarcane cultivation following IPCC 2006/2019 Tier 1 methodology.",
+        riceTitle: "🌾 Rice Cultivation",
+        riceAreaLabel: "Cultivation Area",
+        riceYieldLabel: "Crop Yield",
+        riceTypeLabel: "Irrigation Type",
+        riceOrganicLabel: "Organic Matter Input (annual)",
+        flooded: "Flooded",
+        rainfed: "Rainfed",
+        upland: "Upland",
+        sugarcaneTitle: "🌱 Sugarcane Cultivation",
+        sugarcaneAreaLabel: "Cultivation Area",
+        sugarcaneYieldLabel: "Crop Yield",
+        sugarcaneManureLabel: "Manure Application (annual)",
+        sugarcaneOrganicLabel: "Organic Matter Retention",
+        full: "Full (all residue)",
+        partial: "Partial (50% removal)",
+        removed: "Removed (harvested)",
+        fertilizerTitle: "Nitrogen Fertilizer Input",
+        nitrogenRateLabel: "Total N Applied",
+        fertilizerTypeLabel: "Fertilizer Type",
+        urea: "Urea",
+        ammoniumNitrate: "Ammonium Nitrate",
+        ammoniumSulfate: "Ammonium Sulfate",
+        organic: "Organic (manure)",
+        resultsTitle: "Emissions Summary",
+        totalLabel: "Total GHG Emissions",
+        breakdownTitle: "Emissions Breakdown",
+        calcButton: "Calculate",
+        resetButton: "Reset",
+        methodologyTitle: "Methodology:",
+        methodologyText: "This calculator uses IPCC 2006 and 2019 Refinement guidelines for agricultural emissions. Tier 1 default coefficients are applied based on crop type, management practices, and climate zone. Results are expressed as CO₂ equivalents using 100-year Global Warming Potential (GWP₁₀₀): CH₄ = 28, N₂O = 265.",
+        footer: "&copy; 2026 Apisada Chulakadabba. GHG Calculator for Agricultural Emissions Assessment."
+      },
+      th: {
+        subtitle: "เครื่องมือคำนวณการปล่อยก๊าซเรือนกระจกจากการเกษตร",
+        intro: "เครื่องมือคำนวณนี้ประมาณการปล่อยก๊าซเรือนกระจก (CH₄, N₂O, CO₂) จากการปลูกข้าวและอ้อยตามแนวทาง IPCC 2006/2019 Tier 1",
+        riceTitle: "🌾 การปลูกข้าว",
+        riceAreaLabel: "พื้นที่ปลูก",
+        riceYieldLabel: "ผลผลิต",
+        riceTypeLabel: "ประเภทการชลประทาน",
+        riceOrganicLabel: "วัสดุอินทรีย์ที่ป้อน (ต่อปี)",
+        flooded: "น้ำท่วม",
+        rainfed: "ฝนโปรย",
+        upland: "ไร่สูง",
+        sugarcaneTitle: "🌱 การปลูกอ้อย",
+        sugarcaneAreaLabel: "พื้นที่ปลูก",
+        sugarcaneYieldLabel: "ผลผลิต",
+        sugarcaneManureLabel: "การใช้ปุ๋ยสัตว์ (ต่อปี)",
+        sugarcaneOrganicLabel: "การเก็บรักษาวัสดุอินทรีย์",
+        full: "ทั้งหมด",
+        partial: "บางส่วน (50%)",
+        removed: "เก็บเกี่ยว",
+        fertilizerTitle: "การป้อนปุ๋ยไนโตรเจน",
+        nitrogenRateLabel: "ปุ๋ยไนโตรเจนทั้งหมด",
+        fertilizerTypeLabel: "ประเภทปุ๋ย",
+        urea: "ยูเรีย",
+        ammoniumNitrate: "แอมโมเนียมไนเตรต",
+        ammoniumSulfate: "แอมโมเนียมซัลเฟต",
+        organic: "อินทรีย์ (ปุ๋ยสัตว์)",
+        resultsTitle: "สรุปการปล่อยก๊าซ",
+        totalLabel: "การปล่อยก๊าซเรือนกระจกทั้งหมด",
+        breakdownTitle: "รายละเอียดการปล่อยก๊าซ",
+        calcButton: "คำนวณ",
+        resetButton: "รีเซ็ต",
+        methodologyTitle: "วิธีการ:",
+        methodologyText: "เครื่องมือคำนวณนี้ใช้แนวทาง IPCC 2006 และ 2019 สำหรับการปล่อยก๊าซจากการเกษตร ใช้ค่าสัมประสิทธิ์เริ่มต้น Tier 1 ตามประเภทพืช วิธีการจัดการ และโซนภูมิอากาศ ผลลัพธ์แสดงเป็น CO₂ เทียบเท่า โดยใช้ Global Warming Potential 100 ปี (GWP₁₀₀): CH₄ = 28, N₂O = 265",
+        footer: "&copy; 2026 Apisada Chulakadabba. เครื่องมือคำนวณการปล่อยก๊าซเรือนกระจกจากการเกษตร"
+      }
+    };
+
+    let currentLanguage = 'en';
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      updateLanguage();
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function updateLanguage() {
+      const t = translations[currentLanguage];
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('intro').innerHTML = `<p>${t.intro}</p>`;
+      document.getElementById('riceTitle').textContent = t.riceTitle;
+      document.getElementById('riceAreaLabel').textContent = t.riceAreaLabel;
+      document.getElementById('riceYieldLabel').textContent = t.riceYieldLabel;
+      document.getElementById('riceTypeLabel').textContent = t.riceTypeLabel;
+      document.getElementById('riceOrganicLabel').textContent = t.riceOrganicLabel;
+      document.getElementById('flooded').textContent = t.flooded;
+      document.getElementById('rainfed').textContent = t.rainfed;
+      document.getElementById('upland').textContent = t.upland;
+      document.getElementById('sugarcaneTitle').textContent = t.sugarcaneTitle;
+      document.getElementById('sugarcaneAreaLabel').textContent = t.sugarcaneAreaLabel;
+      document.getElementById('sugarcaneYieldLabel').textContent = t.sugarcaneYieldLabel;
+      document.getElementById('sugarcaneManureLabel').textContent = t.sugarcaneManureLabel;
+      document.getElementById('sugarcaneOrganicLabel').textContent = t.sugarcaneOrganicLabel;
+      document.getElementById('full').textContent = t.full;
+      document.getElementById('partial').textContent = t.partial;
+      document.getElementById('removed').textContent = t.removed;
+      document.getElementById('fertilizerTitle').textContent = t.fertilizerTitle;
+      document.getElementById('nitrogenRateLabel').textContent = t.nitrogenRateLabel;
+      document.getElementById('fertilizerTypeLabel').textContent = t.fertilizerTypeLabel;
+      document.getElementById('urea').textContent = t.urea;
+      document.getElementById('ammonium-nitrate').textContent = t.ammoniumNitrate;
+      document.getElementById('ammonium-sulfate').textContent = t.ammoniumSulfate;
+      document.getElementById('organic').textContent = t.organic;
+      document.getElementById('resultsTitle').textContent = t.resultsTitle;
+      document.getElementById('totalLabel').textContent = t.totalLabel;
+      document.getElementById('breakdownTitle').textContent = t.breakdownTitle;
+      document.getElementById('calcButton').textContent = t.calcButton;
+      document.getElementById('resetButton').textContent = t.resetButton;
+      document.getElementById('methodologyTitle').textContent = t.methodologyTitle;
+      document.getElementById('methodologyText').textContent = t.methodologyText;
+      document.getElementById('footer').innerHTML = `<p>${t.footer}</p>`;
+    }
+
+    function calculateEmissions() {
+      // Get input values
+      const riceArea = parseFloat(document.getElementById('riceArea').value) || 0;
+      const riceType = document.getElementById('riceType').value;
+      const riceOrganic = parseFloat(document.getElementById('riceOrganic').value) || 0;
+
+      const sugarcaneArea = parseFloat(document.getElementById('sugarcaneArea').value) || 0;
+      const sugarcaneOrganic = document.getElementById('sugarcaneOrganic').value;
+
+      const nitrogenRate = parseFloat(document.getElementById('nitrogenRate').value) || 0;
+
+      // IPCC Tier 1 Default Emission Factors
+      const riceEF = {
+        flooded: 1.3,      // kg CH4/ha/year for flooded rice
+        rainfed: 0.35,
+        upland: 0.1
+      };
+
+      const directN2OEF = 0.01;        // kg N2O-N/kg N applied
+      const indirectN2OEF = 0.01;      // kg N2O-N/kg N leached
+
+      // GWP values (100-year)
+      const GWP_CH4 = 28;
+      const GWP_N2O = 265;
+      const GWP_CO2 = 1;
+
+      // Calculate CH4 emissions from rice
+      let ch4Rice = 0;
+      if (riceArea > 0) {
+        const baseEF = riceEF[riceType];
+        ch4Rice = riceArea * baseEF * (1 + riceOrganic * 0.1); // organic matter adjustment
+      }
+
+      // Calculate N2O emissions from nitrogen
+      let n2oTotal = 0;
+      if (nitrogenRate > 0) {
+        n2oTotal = (nitrogenRate * directN2OEF) + (nitrogenRate * indirectN2OEF);
+      }
+
+      // Convert to CO2-eq
+      const ch4CO2eq = ch4Rice * 44/12 * GWP_CH4;  // Convert to CO2 equivalent
+      const n2oCO2eq = n2oTotal * 44/28 * GWP_N2O;  // Convert to CO2 equivalent
+
+      const totalArea = riceArea + sugarcaneArea;
+      const co2SoilCarbon = totalArea > 0 ? totalArea * 0.5 : 0; // Simplified soil carbon change
+
+      // Display results
+      document.getElementById('ch4Result').textContent = Math.round(ch4CO2eq).toLocaleString();
+      document.getElementById('n2oResult').textContent = Math.round(n2oCO2eq).toLocaleString();
+      document.getElementById('co2Result').textContent = Math.round(co2SoilCarbon).toLocaleString();
+
+      const totalEmissions = ch4CO2eq + n2oCO2eq + co2SoilCarbon;
+      document.getElementById('totalResult').textContent = Math.round(totalEmissions).toLocaleString();
+
+      // Display breakdown
+      const breakdownHTML = `
+        <div class="breakdown-item">
+          <span class="breakdown-label">CH₄ from Rice:</span>
+          <span class="breakdown-value">${Math.round(ch4CO2eq).toLocaleString()} kg CO₂-eq</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">N₂O from Fertilizer:</span>
+          <span class="breakdown-value">${Math.round(n2oCO2eq).toLocaleString()} kg CO₂-eq</span>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-label">Soil Carbon Change:</span>
+          <span class="breakdown-value">${Math.round(co2SoilCarbon).toLocaleString()} kg CO₂-eq</span>
+        </div>
+        <div class="breakdown-item" style="border-top: 2px solid #667eea; margin-top: 10px; padding-top: 15px;">
+          <span class="breakdown-label"><strong>Total:</strong></span>
+          <span class="breakdown-value"><strong>${Math.round(totalEmissions).toLocaleString()} kg CO₂-eq</strong></span>
+        </div>
+      `;
+      document.getElementById('breakdownContent').innerHTML = breakdownHTML;
+    }
+
+    function resetForm() {
+      document.getElementById('riceArea').value = '';
+      document.getElementById('riceYield').value = '5';
+      document.getElementById('riceOrganic').value = '';
+      document.getElementById('sugarcaneArea').value = '';
+      document.getElementById('sugarcaneYield').value = '60';
+      document.getElementById('sugarcaneManure').value = '';
+      document.getElementById('nitrogenRate').value = '';
+
+      document.getElementById('ch4Result').textContent = '0';
+      document.getElementById('n2oResult').textContent = '0';
+      document.getElementById('co2Result').textContent = '0';
+      document.getElementById('totalResult').textContent = '0';
+      document.getElementById('breakdownContent').innerHTML = '';
+    }
+
+    // Initialize language on load
+    window.addEventListener('load', function() {
+      updateLanguage();
+    });
+  </script>
+</body>
+</html>
